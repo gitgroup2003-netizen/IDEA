@@ -4,7 +4,8 @@
   "description": "IDEA by GIT GROUP: build, research and expand an idea with AI",
   "main": "app.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "node build-pages.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

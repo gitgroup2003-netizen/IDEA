@@ -60,4 +60,9 @@ app.post("/api/email", ah(async (req, res) => {
     res.json({ ok: true });
   } catch (e) { console.error("mail", e.message); res.status(502).json({ error: "email_failed" }); }
 }));
+// The web page itself (embedded so it works on Vercel, which does not hand out the public folder to Express apps)
+const PAGES = require("./pages");
+app.get(["/", "/index.html"], (q, s) => s.set("Cache-Control", "no-cache").type("html").send(PAGES.html));
+app.get("/claude-shim.js", (q, s) => s.set("Cache-Control", "no-cache").type("js").send(PAGES.shim));
+app.use((q, s) => s.status(404).json({ error: "not_found" }));
 module.exports = app;

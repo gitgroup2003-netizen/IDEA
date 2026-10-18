@@ -10,6 +10,8 @@ A web platform where anyone can build, research and expand an idea with AI. Your
 - `public/claude-shim.js` : connects the page to your server.
 - `.env.example` : the list of settings. Copy to `.env`. Never share `.env`.
 
+NOTE: the web page is embedded in `pages.js` (made from `public/`). If you edit anything in `public/`, run `npm run build` and commit the new `pages.js`.
+
 ## 1. Get a key safely
 1. Go to console.anthropic.com and sign in to YOUR account.
 2. Create a NEW API key named "IDEA" (do not reuse a key you use elsewhere).

@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express"), crypto = require("crypto"), nodemailer = require("nodemailer"), store = require("./store");
+process.on("unhandledRejection", e => console.error("Unhandled rejection:", e && e.message));
 const KEY = process.env.ANTHROPIC_API_KEY, PROD = !!(process.env.VERCEL || process.env.NODE_ENV === "production");
 const MODELS = { quick: process.env.MODEL_QUICK || "claude-haiku-5-5", default: process.env.MODEL_DEFAULT || "claude-sonnet-5-5", complex: process.env.MODEL_COMPLEX || "claude-sonnet-5-5" };
 const DAILY = +process.env.DAILY_AI_LIMIT_PER_USER || 60;
@@ -21,7 +22,7 @@ const limit = ah(async (req, res, next) => {
   if (await store.bump(req.uid, "ai" + today()) > DAILY) return res.status(429).json({ error: "daily_limit" });
   next();
 });
-app.get("/api/health", (q, r) => r.json({ ai: !!KEY, email: !!process.env.SMTP_HOST, storage: store.kind }));
+app.get("/api/health", (q, r) => r.json({ ai: !!KEY, email: !!process.env.SMTP_HOST, storage: store.kind, storageNote: store.error || null }));
 
 app.post("/api/ai", limit, ah(async (req, res) => {
   if (!KEY) return res.status(503).json({ error: "ai_not_configured" });

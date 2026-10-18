@@ -4,7 +4,7 @@ Created by Frank Ssemakula, CEO, GIT GROUP (Home of Technology).
 A web platform where anyone can build, research and expand an idea with AI. Your Claude API key stays on the SERVER and never reaches the browser.
 
 ## What is in this folder
-- `app.js` : the backend (AI calls, storage, email, limits). `server.js` runs it as a normal server; `api/index.js` runs it on Vercel. `store.js` picks Postgres or SQLite.
+- `app.js` : the backend (AI calls, storage, email, limits). `server.js` runs it as a normal server on your own computer or Render/Railway; Vercel runs `app.js` directly. `store.js` picks Postgres or SQLite.
 - `server.js` : local start. 
 - `public/index.html` : the app people see (same interface and flow as the demo).
 - `public/claude-shim.js` : connects the page to your server.
@@ -19,6 +19,7 @@ A web platform where anyone can build, research and expand an idea with AI. Your
 ## 2. Run it on your computer (needs Node.js 18 or newer)
 ```
 npm install
+npm install better-sqlite3   # only needed when DATABASE_URL is empty (local file database)
 cp .env.example .env      # then open .env and paste your key after ANTHROPIC_API_KEY=
 npm start
 ```
@@ -27,17 +28,17 @@ Open http://localhost:3000
 ## 3A. Put it online on VERCEL
 Vercel runs short-lived, read-only functions, so it cannot keep a local database file. This version stores data in a hosted Postgres database instead.
 1. Replace the files in your GitHub repository with the files from this folder and commit.
-2. In Vercel, open the project > Settings > General: Framework Preset = "Other". Leave Build Command empty.
+2. In Vercel, open the project > Settings > General (Build and Deployment): Framework Preset = "Express" (Vercel usually detects it by itself). Make sure Output Directory and Build Command are EMPTY (turn off any override). Vercel finds `app.js` as the app and serves everything in `public/` as the website.
 3. Add a database: Vercel dashboard > Storage (or Marketplace) > create a Postgres database (Neon) and connect it to this project. This adds `DATABASE_URL` automatically.
 4. Settings > Environment Variables: add `ANTHROPIC_API_KEY` (your new key). Add the optional ones from `.env.example` if wanted.
 5. Redeploy (environment changes only apply to new deployments).
 6. Open `https://YOUR-SITE.vercel.app/api/health`. You should see `{"ai":true,...,"storage":"postgres"}`. If `ai` is false the key is missing; if you see an error page, open Vercel > project > Logs and read the first red line.
-Notes: drafts can take 20 to 50 seconds, so the function allows up to 60 seconds (`vercel.json`); if your Vercel plan caps functions lower, long drafts will time out. Vercel's free Hobby plan is meant for personal, non-commercial use, so check their terms before a commercial launch.
+Notes: drafts can take 20 to 50 seconds. If they time out, raise the function's maximum duration in Vercel > Settings > Functions (your plan may cap it). Vercel's free Hobby plan is meant for personal, non-commercial use, so check their terms before a commercial launch.
 
 ## 3B. Or put it online on Render / Railway / Fly.io (runs `server.js` as a normal server)
 1. Build command `npm install`, start command `npm start`.
 2. Add the environment variables from `.env.example`.
-3. Add a Persistent Disk and set `DATA_DIR` to its path, or set `DATABASE_URL` to a Postgres database. Without one of these, saved ideas are erased on restart.
+3. Run `npm install better-sqlite3` in the build command (`npm install && npm install better-sqlite3`) and add a Persistent Disk with `DATA_DIR` set to its path, OR just set `DATABASE_URL` to a Postgres database (simplest). Without one of these, saved ideas are erased on restart.
 4. Add your own domain in the host's settings (HTTPS is automatic) and set `NODE_ENV=production`.
 
 ## Optional: email documents to users

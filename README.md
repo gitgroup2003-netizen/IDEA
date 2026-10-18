@@ -27,7 +27,7 @@ Open http://localhost:3000
 
 ## 3A. Put it online on VERCEL
 Vercel runs short-lived, read-only functions, so it cannot keep a local database file. This version stores data in a hosted Postgres database instead.
-1. Replace the files in your GitHub repository with the files from this folder and commit.
+1. Replace the files in your GitHub repository with the files from this folder and commit. Uploading does NOT delete old files, so also delete the folder `api` from the repo if it exists (GitHub: open the file `api/index.js`, click the trash icon, commit). `vercel.json` in this folder is intentionally empty: it overwrites the old one.
 2. In Vercel, open the project > Settings > General (Build and Deployment): Framework Preset = "Express" (Vercel usually detects it by itself). Make sure Output Directory and Build Command are EMPTY (turn off any override). Vercel finds `app.js` as the app and serves everything in `public/` as the website.
 3. Add a database: Vercel dashboard > Storage (or Marketplace) > create a Postgres database (Neon) and connect it to this project. This adds `DATABASE_URL` automatically.
 4. Settings > Environment Variables: add `ANTHROPIC_API_KEY` (your new key). Add the optional ones from `.env.example` if wanted.
